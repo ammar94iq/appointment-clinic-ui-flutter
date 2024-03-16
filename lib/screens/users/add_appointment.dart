@@ -153,12 +153,42 @@ class AvailableTimes extends StatelessWidget {
   Widget build(BuildContext context) {
     var model = Provider.of<UsersProvider>(context, listen: true);
     final startTime = detailsDoctor['startTime'];
-
     final endTime = detailsDoctor['endTime'];
-    List availableTimes = [];
-    for (var i = startTime; i <= endTime; i++) {
-      availableTimes.add("$i:00");
+
+    // Function to get the AM/PM designation from a time string
+    String getPeriod(String time) {
+      final parts = time.split(' ');
+      return parts[1]; // Extract AM/PM designation
     }
+
+    final startPeriod = getPeriod(startTime);
+    final endPeriod = getPeriod(endTime);
+
+    // Parse the hours from the start and end times
+    final startHour = int.parse(startTime.split(':')[0]);
+    final endHour = int.parse(endTime.split(':')[0]);
+
+    List<String> availableTimes = [];
+
+    // Loop through each hour and add to availableTimes
+    if (startPeriod == endPeriod) {
+      // If both start and end times are in the same period (AM or PM)
+      for (int i = startHour; i <= endHour; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $startPeriod');
+      }
+    } else {
+      // If start and end times are in different periods (AM to PM transition)
+      for (int i = startHour; i <= 12; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $startPeriod');
+      }
+      for (int i = 1; i <= endHour; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $endPeriod');
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -188,7 +218,7 @@ class AvailableTimes extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Text(
-                    "${availableTimes[index]}",
+                    availableTimes[index],
                     style: TextStyle(
                       color: isSelected ? whiteColor : greyColor,
                     ),

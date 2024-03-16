@@ -3,7 +3,7 @@ const String linkServerName =
     "http://10.0.2.2/doctor_finder_appointment_booking/";
 //if used your phone used ip from ipconfig
 //const String linkServerName =
-//    "http://192.168.0.103/doctor_finder_appointment_booking";
+//    "http://192.168.0.105/doctor_finder_appointment_booking";
 
 //Auth
 const String linkRegister = "$linkServerName/auth/register.php";
@@ -23,6 +23,9 @@ const String linkAddAppointment = "$linkServerName/users/add_appointment.php";
 
 const String linkUpdateAppointment =
     "$linkServerName/users/update_appointment.php";
+
+const String linkCancelAppointment =
+    "$linkServerName/users/cancel_appointment.php";
 
 const String linkShowMyAppointments =
     "$linkServerName/users/show_my_appointments.php";

@@ -308,7 +308,7 @@ class DoctorDetailsContent extends StatelessWidget {
             subtitle: Text(
                 textAlign: TextAlign.end,
                 textDirection: TextDirection.ltr,
-                "${detailsDoctor['startTime']}:00 - ${detailsDoctor['endTime']}:00"),
+                "${detailsDoctor['startTime']} - ${detailsDoctor['endTime']}"),
           ),
           ListTile(
             contentPadding: const EdgeInsets.all(5.0),

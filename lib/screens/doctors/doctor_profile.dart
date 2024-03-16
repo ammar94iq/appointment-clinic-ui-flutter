@@ -363,36 +363,14 @@ class WeekDays extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10.0),
-          TextFormField(
-            maxLength: 2,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-            style: TextStyle(color: whiteColor),
-            controller: model.startTime,
-            decoration: InputDecoration(
-              fillColor: blueColor,
-              filled: true,
-              border: const OutlineInputBorder(borderSide: BorderSide.none),
-            ),
-          ),
+          SelectStartTime(model: model),
           const SizedBox(height: 30.0),
           const Text(
             "وقت النهاية",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10.0),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            maxLength: 2,
-            textInputAction: TextInputAction.next,
-            style: TextStyle(color: whiteColor),
-            controller: model.endTime,
-            decoration: InputDecoration(
-              fillColor: blueColor,
-              filled: true,
-              border: const OutlineInputBorder(borderSide: BorderSide.none),
-            ),
-          ),
+          SelectEndTime(model: model),
           const SizedBox(height: 30.0),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -410,6 +388,153 @@ class WeekDays extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SelectStartTime extends StatelessWidget {
+  final DoctorsProvider model;
+  const SelectStartTime({Key? key, required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<DropdownMenuItem<String>> getDropdownTimes() {
+      List<DropdownMenuItem<String>> items = [];
+      for (int hour = 1; hour <= 12; hour++) {
+        items.add(
+          DropdownMenuItem(
+            alignment: AlignmentDirectional.centerEnd,
+            value: hour.toString(),
+            child: Text(
+              "$hour : 00",
+              style: TextStyle(color: blueColor),
+            ),
+          ),
+        );
+      }
+      return items;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            DropdownButton(
+              padding: const EdgeInsets.all(10.0),
+              value: model.doctorPeriodStartTime.isEmpty
+                  ? null
+                  : model.doctorPeriodStartTime,
+              items: [
+                DropdownMenuItem(
+                  alignment: AlignmentDirectional.centerEnd,
+                  value: 'AM',
+                  child: Text("AM", style: TextStyle(color: blueColor)),
+                ),
+                DropdownMenuItem(
+                  alignment: AlignmentDirectional.centerEnd,
+                  value: 'PM',
+                  child: Text("PM", style: TextStyle(color: blueColor)),
+                ),
+              ],
+              onChanged: (value) {
+                model.selectDoctorPeriodStartTime(value.toString());
+              },
+              underline: Container(),
+            ),
+            DropdownButton(
+              style: TextStyle(color: whiteColor, fontSize: 20.0),
+              padding: const EdgeInsets.all(10.0),
+              value:
+                  model.doctorStartTime.isEmpty ? null : model.doctorStartTime,
+              items: getDropdownTimes(),
+              onChanged: (value) {
+                model.selectDoctorStartTime(value.toString());
+              },
+              underline: Container(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SelectEndTime extends StatelessWidget {
+  final DoctorsProvider model;
+  const SelectEndTime({Key? key, required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<DropdownMenuItem<String>> getDropdownTimes() {
+      List<DropdownMenuItem<String>> items = [];
+      for (int hour = 1; hour <= 12; hour++) {
+        items.add(
+          DropdownMenuItem(
+            alignment: AlignmentDirectional.centerEnd,
+            value: hour.toString(),
+            child: Text(
+              "$hour : 00",
+              style: TextStyle(color: blueColor),
+            ),
+          ),
+        );
+      }
+      return items;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            DropdownButton(
+              padding: const EdgeInsets.all(10.0),
+              value: model.doctorPeriodEndTime.isEmpty
+                  ? null
+                  : model.doctorPeriodEndTime,
+              items: [
+                DropdownMenuItem(
+                  alignment: AlignmentDirectional.centerEnd,
+                  value: 'AM',
+                  child: Text("AM", style: TextStyle(color: blueColor)),
+                ),
+                DropdownMenuItem(
+                  alignment: AlignmentDirectional.centerEnd,
+                  value: 'PM',
+                  child: Text("PM", style: TextStyle(color: blueColor)),
+                ),
+              ],
+              onChanged: (value) {
+                model.selectDoctorPeriodEndTime(value.toString());
+              },
+              underline: Container(),
+            ),
+            DropdownButton(
+              style: TextStyle(color: whiteColor, fontSize: 20.0),
+              padding: const EdgeInsets.all(10.0),
+              value: model.doctorEndTime.isEmpty ? null : model.doctorEndTime,
+              items: getDropdownTimes(),
+              onChanged: (value) {
+                model.selectDoctorEndTime(value.toString());
+              },
+              underline: Container(),
+            ),
+          ],
+        ),
       ),
     );
   }

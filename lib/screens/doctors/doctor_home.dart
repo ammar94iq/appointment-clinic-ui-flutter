@@ -28,7 +28,7 @@ class DoctorHome extends StatelessWidget {
         body: Container(
           color: Colors.grey[300],
           child: PageView(
-            physics: const BouncingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: model.pageController,
             children: [
               RefreshIndicator(

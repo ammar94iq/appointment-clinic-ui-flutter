@@ -43,7 +43,8 @@ List<Map<String, String>> specialtyDoctors = [
 ];
 
 class Specialty extends StatelessWidget {
-  const Specialty({super.key});
+  final String serviceNumber;
+  const Specialty({super.key, required this.serviceNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +56,28 @@ class Specialty extends StatelessWidget {
       );
     }
 
+    String pageTitle = '';
+    if (serviceNumber == '1') {
+      pageTitle = 'موعد بالعيادة';
+    } else if (serviceNumber == '2') {
+      pageTitle = 'اون لاين';
+    } else if (serviceNumber == '3') {
+      pageTitle = 'في المنزل';
+    } else if (serviceNumber == '4') {
+      pageTitle = 'اشعة وسونار';
+    } else if (serviceNumber == '5') {
+      pageTitle = 'مختبرات';
+    } else if (serviceNumber == '6') {
+      pageTitle = 'صيدليات';
+    } else {
+      pageTitle = 'جميع التخصصات';
+    }
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey[300],
-          title: const Text("جميع التخصصات"),
+          title: Text(pageTitle),
         ),
         body: Consumer<UsersProvider>(builder: (context, value, child) {
           return Container(

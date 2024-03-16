@@ -32,7 +32,7 @@ class UserSetting extends StatelessWidget {
     void goToAllSpecialtyDoctor() {
       Navigator.of(context).push(
         createRoute(
-          const Specialty(),
+          const Specialty(serviceNumber: ''),
         ),
       );
     }

@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -89,7 +90,6 @@ class AvailableDays extends StatelessWidget {
     //convert from string into date time
     DateTime selectedDay = DateTime.parse(appointmentIndex['selectedDay']);
     List<int> activeWorkdays = [];
-
     for (var i = 0; i < workTodays.length; i++) {
       switch (workTodays[i]) {
         case 'السبت':
@@ -191,13 +191,44 @@ class AvailableTimes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var model = Provider.of<UsersProvider>(context, listen: true);
-    final startTime = appointmentIndex['startTime'];
 
+    final startTime = appointmentIndex['startTime'];
     final endTime = appointmentIndex['endTime'];
-    List availableTimes = [];
-    for (var i = startTime; i <= endTime; i++) {
-      availableTimes.add("$i:00");
+
+    // Function to get the AM/PM designation from a time string
+    String getPeriod(String time) {
+      final parts = time.split(' ');
+      return parts[1]; // Extract AM/PM designation
     }
+
+    final startPeriod = getPeriod(startTime);
+    final endPeriod = getPeriod(endTime);
+
+    // Parse the hours from the start and end times
+    final startHour = int.parse(startTime.split(':')[0]);
+    final endHour = int.parse(endTime.split(':')[0]);
+
+    List<String> availableTimes = [];
+
+    // Loop through each hour and add to availableTimes
+    if (startPeriod == endPeriod) {
+      // If both start and end times are in the same period (AM or PM)
+      for (int i = startHour; i <= endHour; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $startPeriod');
+      }
+    } else {
+      // If start and end times are in different periods (AM to PM transition)
+      for (int i = startHour; i <= 12; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $startPeriod');
+      }
+      for (int i = 1; i <= endHour; i++) {
+        final hour = i % 12 == 0 ? 12 : i % 12;
+        availableTimes.add('$hour:00 $endPeriod');
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -234,7 +265,7 @@ class AvailableTimes extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Text(
-                    "${availableTimes[index]}",
+                    availableTimes[index],
                     style: TextStyle(
                       color: isSelected ? whiteColor : greyColor,
                     ),
@@ -314,29 +345,121 @@ class BookingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     var model = Provider.of<UsersProvider>(context, listen: true);
 
-    void showDialog(String resultMessage) {
-      DialogHelper.myDialog(context, resultMessage, 'pop');
-    }
-
     void showLoading() {
       DialogHelper.showLoadingIndicator(context);
     }
 
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: greenColor,
-        foregroundColor: whiteColor,
-      ),
-      onPressed: () async {
-        showLoading();
-        await model.updateAppointment(
-            appointmentIndex['id'], appointmentIndex['randomIdDoctor']);
-        showDialog(model.resultMessage);
-      },
-      child: const Text(
-        "تعديل الحجز",
-        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-      ),
-    );
+    void showDialog(String resultMessage) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.info,
+        animType: AnimType.bottomSlide,
+        dismissOnTouchOutside: false,
+        body: SizedBox(
+          height: 150.0,
+          child: Center(
+            child: Text(
+              textAlign: TextAlign.center,
+              resultMessage,
+            ),
+          ),
+        ),
+        transitionAnimationDuration: const Duration(milliseconds: 300),
+        btnOkText: "حسنا",
+        btnOkOnPress: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
+      ).show();
+    }
+
+    TimeOfDay convertStringToTimeOfDay(String timeString) {
+      final parts = timeString.split(' '); // Split time string by space
+      final timeParts = parts[0].split(':'); // Split time part by colon
+      var hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+      // Adjust hour if PM
+      if (parts[1].toLowerCase() == 'pm' && hour < 12) {
+        hour += 12;
+      }
+      return TimeOfDay(hour: hour, minute: minute);
+    }
+
+    DateTime selectedDay = DateTime.parse(appointmentIndex['selectedDay']);
+    TimeOfDay startTime =
+        convertStringToTimeOfDay(appointmentIndex['startTime']);
+    TimeOfDay currentTime = TimeOfDay.now();
+    // Check if selectedDay is less than or equal to today And startTime is less than current time
+    if ((selectedDay.isBefore(DateTime.now()) ||
+            selectedDay.isAtSameMomentAs(DateTime.now())) &&
+        startTime.hour < currentTime.hour) {
+      return Center(
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: greenColor,
+                foregroundColor: whiteColor,
+              ),
+              onPressed: () {},
+              child: const Text('لا يمكنك التعديل او الالغاء على هذا الحجز')));
+    } else {
+      return Column(
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: greenColor,
+              foregroundColor: whiteColor,
+            ),
+            onPressed: () async {
+              showLoading();
+              await model.updateAppointment(
+                  appointmentIndex['id'], appointmentIndex['randomIdDoctor']);
+              showDialog(model.resultMessage);
+            },
+            child: const Text(
+              "تعديل الحجز",
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[300],
+              foregroundColor: whiteColor,
+            ),
+            onPressed: () async {
+              AwesomeDialog(
+                context: context,
+                dialogType: DialogType.warning,
+                animType: AnimType.bottomSlide,
+                dismissOnTouchOutside: false,
+                body: const SizedBox(
+                  height: 150.0,
+                  child: Center(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'هل انت متأكد من الغاء هذا الحجز',
+                    ),
+                  ),
+                ),
+                transitionAnimationDuration: const Duration(milliseconds: 300),
+                btnOkText: "نعم",
+                btnOkOnPress: () async {
+                  showLoading();
+                  await model.cancelAppointment(appointmentIndex['id']);
+                  showDialog(model.resultMessage);
+                },
+                btnCancelText: "لا",
+                btnCancelOnPress: () {
+                  return;
+                },
+              ).show();
+            },
+            child: const Text(
+              "الغاء الحجز",
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
+      );
+    }
   }
 }

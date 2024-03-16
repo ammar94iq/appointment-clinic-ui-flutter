@@ -82,6 +82,8 @@ class MyAppointments extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () {
+                                  value.selectedTime = '';
+                                  value.isSelectedDay = false;
                                   goToDetailsAppointment(
                                     value.myAppointments[index],
                                   );
@@ -122,11 +124,6 @@ class MyAppointments extends StatelessWidget {
                                                   value.myAppointments[index],
                                             ),
                                             const SizedBox(height: 5.0),
-                                            /*DoctorEvaluation(
-                                              appointmentIndex:
-                                                  value.myAppointments[index],
-                                            ),
-                                            */
                                           ],
                                         ),
                                       ),

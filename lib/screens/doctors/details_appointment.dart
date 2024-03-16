@@ -229,22 +229,27 @@ class RecipesButton extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Text('العلاج'),
+        const SizedBox(height: 5.0),
         textFormField(model.recipes, 255, 10, whiteColor, TextInputType.text),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: greenColor,
-            foregroundColor: whiteColor,
-          ),
-          onPressed: () async {
-            showLoading();
-            await model.addUserRecipes(appointmentIndex['id'].toString(),
-                appointmentIndex['randomIdUser'].toString());
-            showDialog(model.resultMessage);
-          },
-          child: const Text(
-            "اضافة علاج",
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: greenColor,
+              foregroundColor: whiteColor,
+            ),
+            onPressed: () async {
+              showLoading();
+              await model.addUserRecipes(appointmentIndex['id'].toString(),
+                  appointmentIndex['randomIdUser'].toString());
+              showDialog(model.resultMessage);
+            },
+            child: const Text(
+              "اضافة علاج",
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ],

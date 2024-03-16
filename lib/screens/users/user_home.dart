@@ -33,7 +33,7 @@ class UserHome extends StatelessWidget {
         body: Container(
           color: Colors.grey[300],
           child: PageView(
-            physics: const BouncingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: model.pageController,
             children: [
               RefreshIndicator(
@@ -346,10 +346,10 @@ class AppointmentsOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var model = Provider.of<UsersProvider>(context, listen: true);
-    void goToSpecialty() {
+    void goToSpecialty(String serviceNumber) {
       Navigator.of(context).push(
         createRoute(
-          const Specialty(),
+          Specialty(serviceNumber: serviceNumber),
         ),
       );
     }
@@ -363,7 +363,7 @@ class AppointmentsOptions extends StatelessWidget {
       return InkWell(
         onTap: () async {
           await model.showAllSpecialtyDoctors(serviceNumber);
-          goToSpecialty();
+          goToSpecialty(serviceNumber);
         },
         child: Column(
           children: [
@@ -503,6 +503,8 @@ class UpcomingAppointments extends StatelessWidget {
 
                             return InkWell(
                               onTap: () {
+                                value.selectedTime = '';
+                                value.isSelectedDay = false;
                                 goToDetailsAppointment(
                                   data,
                                 );

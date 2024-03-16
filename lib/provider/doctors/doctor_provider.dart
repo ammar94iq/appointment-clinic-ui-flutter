@@ -38,21 +38,45 @@ class DoctorsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  TextEditingController startTime = TextEditingController();
-  TextEditingController endTime = TextEditingController();
-
   final Crud _crud = Crud();
   String resultMessage = '';
   //Start store  doctor Work Days in db
+
+  String doctorPeriodStartTime = '';
+  void selectDoctorPeriodStartTime(String? value) {
+    doctorPeriodStartTime = value.toString();
+    notifyListeners();
+  }
+
+  String doctorStartTime = '';
+  void selectDoctorStartTime(String? value) {
+    doctorStartTime = value.toString();
+    notifyListeners();
+  }
+
+  String doctorPeriodEndTime = '';
+  void selectDoctorPeriodEndTime(String? value) {
+    doctorPeriodEndTime = value.toString();
+    notifyListeners();
+  }
+
+  String doctorEndTime = '';
+  void selectDoctorEndTime(String? value) {
+    doctorEndTime = value.toString();
+    notifyListeners();
+  }
+
   Future<void> updateDoctorWorkDays() async {
-    if (startTime.text.isNotEmpty &&
-        endTime.text.isNotEmpty &&
+    if (doctorStartTime.isNotEmpty &&
+        doctorPeriodStartTime.isNotEmpty &&
+        doctorEndTime.isNotEmpty &&
+        doctorPeriodEndTime.isNotEmpty &&
         selectedTodays.isNotEmpty) {
       final responseBody = await _crud.postRequest(linkUpdateDoctorWorkDays, {
         "randomId": sharedPre.getString("randomId"),
         "workTodays": selectedTodays.join(","),
-        "startTime": startTime.text,
-        "endTime": endTime.text,
+        "startTime": "$doctorStartTime $doctorPeriodStartTime",
+        "endTime": "$doctorEndTime $doctorPeriodEndTime",
       });
       if (responseBody['status'] == 'success') {
         resultMessage = "تم اضافة ايام العمل بنجاح";
@@ -73,8 +97,16 @@ class DoctorsProvider extends ChangeNotifier {
     if (responseBody['status'] == 'success') {
       // Initialize selectedTodays with values from workTodaysStored
       selectedTodays = responseBody['data'][0]['workTodays'].split(',');
-      startTime.text = responseBody['data'][0]['startTime'].toString();
-      endTime.text = responseBody['data'][0]['endTime'].toString();
+      List<String> startTime = responseBody['data'][0]['startTime'].split(' ');
+      List<String> endTime = responseBody['data'][0]['endTime'].split(' ');
+
+      // Extract the time and AM/PM designation
+      doctorStartTime = startTime[0]; // "8:00"
+      doctorPeriodStartTime = startTime[1]; // "AM"
+
+      doctorEndTime = endTime[0]; // "8:00"
+      doctorPeriodEndTime = endTime[1]; // "AM"
+
       notifyListeners();
     }
   }
@@ -343,8 +375,10 @@ class DoctorsProvider extends ChangeNotifier {
     isCheckedXRays = false;
     isCheckedLaboratories = false;
     isCheckedPharmacy = false;
-    startTime.text = '';
-    endTime.text = '';
+    doctorStartTime = '';
+    doctorPeriodStartTime = '';
+    doctorEndTime = '';
+    doctorPeriodEndTime = '';
     selectedTodays.clear();
   }
 

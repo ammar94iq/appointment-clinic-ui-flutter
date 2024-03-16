@@ -247,7 +247,7 @@ class AppointmentDate extends StatelessWidget {
       children: [
         Text(
           textDirection: TextDirection.ltr,
-          "${doctorIndex['startTime']} : 00",
+          "${doctorIndex['startTime']}",
           style: TextStyle(color: greenColor),
         ),
         Text(
@@ -256,7 +256,7 @@ class AppointmentDate extends StatelessWidget {
         ),
         Text(
           textDirection: TextDirection.ltr,
-          "${doctorIndex['endTime']} : 00",
+          "${doctorIndex['endTime']}",
           style: TextStyle(color: greenColor),
         ),
       ],

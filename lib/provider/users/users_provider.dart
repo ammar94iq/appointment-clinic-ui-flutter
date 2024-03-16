@@ -117,6 +117,27 @@ class UsersProvider extends ChangeNotifier {
   }
   //End Update My Appointment By User
 
+  //Start Cancel My Appointment By User
+  Future<void> cancelAppointment(int appointmentId) async {
+    resultMessage = '';
+    try {
+      final responseBody = await _crud.postRequest(linkCancelAppointment, {
+        "appointmentId": appointmentId.toString(),
+      });
+
+      if (responseBody['status'] == 'success') {
+        await showMyAppointments();
+        await showMyNewAppointments();
+        resultMessage = "تم الغاء الحجز بنجاح";
+      } else {
+        resultMessage = "حصل فشل في عملية الغاء الحجز";
+      }
+    } catch (e) {
+      debugPrint("======$e=====");
+    }
+  }
+  //End Cancel My Appointment By User
+
   //Start Show My Appointments
   List<Map<String, dynamic>> myAppointments = [];
 
