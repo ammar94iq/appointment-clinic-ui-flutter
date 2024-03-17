@@ -405,7 +405,7 @@ class SelectStartTime extends StatelessWidget {
         items.add(
           DropdownMenuItem(
             alignment: AlignmentDirectional.centerEnd,
-            value: hour.toString(),
+            value: '$hour:00',
             child: Text(
               "$hour : 00",
               style: TextStyle(color: blueColor),
@@ -479,7 +479,7 @@ class SelectEndTime extends StatelessWidget {
         items.add(
           DropdownMenuItem(
             alignment: AlignmentDirectional.centerEnd,
-            value: hour.toString(),
+            value: '$hour:00',
             child: Text(
               "$hour : 00",
               style: TextStyle(color: blueColor),
